@@ -321,7 +321,8 @@ def test_framework_operator_no_ops_imported(tmp_path, monkeypatch, import_line):
         "from charms.reactive.stuff import Stuff",
     ],
 )
-def test_framework_reactive_used_ok(tmp_path, monkeypatch, import_line):
+@pytest.mark.parametrize("charm_name", [("foobar", "foobar"), ("foo-bar", "foo_bar")])
+def test_framework_reactive_used_ok(tmp_path, import_line, charm_name):
     """The reactive framework was used.
 
     Parametrized args:
@@ -329,10 +330,10 @@ def test_framework_reactive_used_ok(tmp_path, monkeypatch, import_line):
     """
     # metadata file with needed name field
     metadata_file = tmp_path / "metadata.yaml"
-    metadata_file.write_text("name: foobar")
+    metadata_file.write_text(f"name: {charm_name[0]}")
 
     # a Python file that imports charms.reactive
-    entrypoint = tmp_path / "reactive" / "foobar.py"
+    entrypoint = tmp_path / "reactive" / f"{charm_name[1]}.py"
     entrypoint.parent.mkdir()
     entrypoint.write_text(f"{import_line}")
 
